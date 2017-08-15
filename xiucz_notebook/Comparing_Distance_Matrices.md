@@ -43,6 +43,17 @@ The Mantel r statistic of 0.68183 indicates that there is relatively strong posi
 
 ### Mantel Correlogram
 
+## R
+```r
+data(varespec)
+data(varechem)
+veg.dist <- vegdist(varespec) # Bray-Curtis
+env.dist <- vegdist(scale(varechem), "euclid")
+mantel(veg.dist, env.dist)
+mantel(veg.dist, env.dist, method="spear")
+```
+
 ## Reference_Info
 http://qiime.org/tutorials/distance_matrix_comparison.html  
-http://qiime.org/scripts/distance_matrix_from_mapping.html
+http://qiime.org/scripts/distance_matrix_from_mapping.html  
+http://cc.oulu.fi/~jarioksa/softhelp/vegan/html/mantel.html
