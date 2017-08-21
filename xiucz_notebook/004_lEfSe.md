@@ -29,7 +29,7 @@ biom convert -i table.biom -o table.from_biom_w_taxonomy.txt --to-tsv \
 --header-key taxonomy
 
 biom convert -i table.biom -o table.from_biom_w_consensuslineage.txt --to-tsv \
---header-key taxonomy --output-metadata-id "ConsensusLineage"
+--header-key taxonomy --output-metadata-id "Consensus Lineage"
 ```
 ## koeken模块
 ### 安装koeken模块
@@ -112,4 +112,4 @@ python2 ~/xiucz/metagenome1/biom2lefse.py \
 ```
 
 # Reference_Info
-https://github.com/fw1121/pannenkoek  
+https://github.com/fw1121/pannenkoek
