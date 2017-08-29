@@ -68,8 +68,8 @@ GP <- GlobalPatterns %>%
 ```
 
 ```
-ggplot(erie_phylum, aes(x = Date, y = Abundance, fill = Phylum)) + 
-  facet_grid(Station~.) +
+ggplot(GP, aes(x = Sample, y = Abundance, fill = Phylum)) + 
+  facet_grid(Description~.) +
   geom_bar(stat = "identity")
 ```
 
@@ -80,7 +80,8 @@ plot_richness(microdf, measures=c("Chao1", "Shannon"))
 plot_richness(microdf, x="Description", measures=c("Chao1", "Shannon"))
 ```
 
-## beta
+## Unconstrained Ordinations
+
 ```r
 ## Remove OTUs that do not show appear more than 2 times in more than half the samples
 wb <- genefilter_sample(qiimedata, filterfun_sample(function(x) x > 2), A=0.5*nsamples(qiimedata))
