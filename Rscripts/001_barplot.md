@@ -14,7 +14,9 @@ mapfile = "map.txt"
 trefile = "rep_set.tre"
 qiimedata <- import_qiime(otufile, mapfile, trefile)
 ```
-
+```
+dsn <- transform_sample_counts(qiimedata, function(x) x / sum(x))
+```
 ```
 microdata <- filter_taxa(qiimedata, function(x) max(x) >= 1, TRUE) %>%
 rarefy_even_depth()
@@ -23,7 +25,6 @@ microdata <- prune_taxa(taxa_sums(microdata) > 0, microdata)
 ```
 
 ```
-#microdata <- qiimedata
 data <- qiimedata
 ```
   
@@ -35,7 +36,6 @@ amp_barplot <- function(data, group = "Sample", tax.aggregate = "Phylum", tax.ad
                tax = data.frame(tax_table(data)@.Data, OTU = rownames(tax_table(data))),
                meta = suppressWarnings(as.data.frame(as.matrix(sample_data(data)))))
 
-  ## Clean up the taxonomy
   ## Extract the data into separate objects for readability
 
   abund <- data[["abund"]]  
@@ -113,6 +113,5 @@ amp_barplot <- function(data, group = "Sample", tax.aggregate = "Phylum", tax.ad
 ```
 
 ```
-abund7 <- amp_barplot(bbn, group = "Sample", tax.aggregate = "Phylum", tax.add = NULL, tax.show = 10, calc = "mean", sort.by = NULL)
-ggplot(abund7, aes(x= Group, y = Abundance, fill = Display)) + geom_bar(position = "fill", stat="identity")
+
 ```
