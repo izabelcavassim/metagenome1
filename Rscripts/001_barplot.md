@@ -17,16 +17,7 @@ qiimedata <- import_qiime(otufile, mapfile, trefile)
 ```
 dsn <- transform_sample_counts(qiimedata, function(x) x / sum(x))
 ```
-```
-microdata <- filter_taxa(qiimedata, function(x) max(x) >= 1, TRUE) %>%
-rarefy_even_depth()
 
-microdata <- prune_taxa(taxa_sums(microdata) > 0, microdata)
-```
-
-```
-data <- qiimedata
-```
   
 ## BARPLOT FUNCTION
 ```
@@ -113,5 +104,60 @@ amp_barplot <- function(data, group = "Sample", tax.aggregate = "Phylum", tax.ad
 ```
 
 ```
+c_color <- c(brewer.pal(9,"Set1"), brewer.pal(12,"Paired"), brewer.pal(12,"Set3"))
 
+if (nsamples(qiimedata) < 60) {
+  axis_x_size=8
+  width      =8
+  height     =6
+}
+micro_theme <- function(..., base_size=12, bg='white') {
+  require(grid)
+  theme_classic(...) +
+    theme_bw() + theme(panel.grid=element_blank()) +
+    theme(panel.border=element_blank()) +
+    theme(axis.line=element_line(size=0.5, colour="black"))
+}
+
+print("barplot_bygroup....")
+for (i in c("Phylum", "Class", "Order", "Family", "Genus", "Species")) {
+  plotdata <- amp_barplot(dsn, group="Description", tax.aggregate=i, tax.add=NULL, tax.show=20, calc="mean", sort.by=NULL)
+  plotdata$Display <- factor(plotdata$Display, levels=c(levels(plotdata$Display), "Others"))
+  plotdata$Display[is.na(plotdata$Display)] <- "Others"
+  plotdata <- plotdata[order(plotdata$Sample),]
+
+  p <- ggplot(plotdata, aes(x= Group, y=Abundance, fill=Display)) +
+              geom_bar(position="fill", stat="identity") +
+              scale_y_continuous(expand=c(0, 0)) +
+              labs(x="", y="Relative abundance") +
+              scale_fill_manual(values=c_color[1:30]) +
+              geom_hline(yintercept=c(0.25, 0.5, 0.75),color="grey50",linetype=2, size=0.3) +
+              theme(axis.text.x=element_text(color="black")) +
+              micro_theme() +
+              guides(fill=guide_legend(ncol=1, title = NULL)) +
+              theme(legend.key.size=unit(.4,'cm'), legend.key=element_rect(colour='white', fill='pink', size=1, linetype=1)) +
+              theme(axis.text.x=element_text(angle=60, size=axis_x_size, vjust=0.5, color="black"))
+  ggsave(paste(i, "_groupby.pdf", sep=""))
+}
+
+## barplot_bysample
+print("barplot_bysample....")
+for (i in c("Phylum", "Class", "Order", "Family", "Genus", "Species")) {
+  plotdata <- amp_barplot(dsn, group="Sample", tax.aggregate=i, tax.add=NULL, tax.show=20, calc="mean", sort.by=NULL)
+  plotdata$Display <- factor(plotdata$Display, levels=c(levels(plotdata$Display), "Others"))
+  plotdata$Display[is.na(plotdata$Display)] <- "Others"
+  plotdata <- plotdata[order(plotdata$Sample),]
+
+  p <- ggplot(plotdata, aes(x= Group, y=Abundance, fill=Display)) +
+              geom_bar(position="fill", stat="identity") +
+              scale_y_continuous(expand=c(0, 0)) +
+              labs(x="", y="Relative abundance") +
+              scale_fill_manual(values=c_color[1:30]) +
+              geom_hline(yintercept=c(0.25, 0.5, 0.75),color="grey50",linetype=2, size=0.3) +
+              micro_theme() +
+              guides(fill=guide_legend(ncol=1, title = NULL)) +
+              theme(legend.key.size=unit(.4,'cm'), legend.key=element_rect(colour='white', fill='pink', size=1, linetype=1)) +
+              theme(axis.text.x=element_text(angle=60, size=axis_x_size, vjust=0.5, color="black"))
+  ggsave(paste(i, "_sampleby.pdf", sep=""), width=width, height=height)
+}
 ```
